@@ -3,7 +3,7 @@ Chances? Evidence from a Regression Discontinuity Design](https://harris.uchicag
 
 ## Explanation of the data
 
-<small>Note: This explanation was taken from Calonico, Sebastian & Cattaneo, Matias & Farrell, Max & Titiunik, Rocío. (2018). _[Regression Discontinuity Designs Using Covariates](https://arxiv.org/pdf/1809.03904v1.pdf)_.</small>
+<sub>Note: This explanation was taken from Calonico, Sebastian & Cattaneo, Matias & Farrell, Max & Titiunik, Rocío. (2018). _[Regression Discontinuity Designs Using Covariates](https://arxiv.org/pdf/1809.03904v1.pdf)_.</sub>
 
 The unit of observation is the U.S. county, the treatment is receiving technical assistance to apply for Head Start funds, and the running variable is the county-level poverty index constructed in 1965 by the federal government based on 1960 census information, with cutoff x = 59.1984. The outcome is the child mortality rate (for children of ages five to nine) due to causes affected by Head Start’s health services component.
 
