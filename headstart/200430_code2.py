@@ -1,14 +1,28 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import datasets, linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 import pandas as pd
 
+
+# In[17]:
+
+
 data=pd.read_csv('data/headstart.csv')
 len_before=len(data.index)
 data=data.dropna(how='any',subset=['povrate60','mort_age59_related_postHS','census1960_pop'])
 len_after=len(data.index)
 print('Dropped',len_before-len_after,'lines that contain NaN.')
+
+
+# In[136]:
+
 
 # t is the threshold, k is a kernel function [0,1]->R, and b is the bandwidth
 # Currently supports only 1D array
@@ -81,7 +95,57 @@ def regr_symmetric(X,Y,t,k,b):
     
     return (regrL,regrR)
 
+
+# In[137]:
+
+
 threshold=59.1984
 def ker_tri(x):
     return 1-x
-regr_symmetric(data['povrate60'],data['mort_age59_related_postHS'],threshold,ker_tri,3)
+regr_symmetric(data['povrate60'],
+               data['mort_age59_related_postHS'],
+               threshold,
+               ker_tri,
+               3)
+
+
+# In[138]:
+
+
+threshold=59.1984
+def ker_rect(x):
+    return 1 # Note that the constant here will not affect the result
+regr_symmetric(data['povrate60'],
+               data['mort_age59_related_postHS'],
+               threshold,
+               ker_rect,
+               3)
+
+
+# In[146]:
+
+
+def get_interval(X,Y,a,b):
+    X1=X[np.logical_and(a<X,X<b)]
+    Y1=Y[np.logical_and(a<X,X<b)]
+def validator3(X,Y,k,b):
+    n=30
+    err_sum=0
+    for test_case in range(n):
+        #todo:select from [l+b,r] rather than [l,r]
+        #select a random node
+        i=X.index[np.random.choice(len(X.index))]
+        x,y=X[i],Y[i]
+        regr_model=regr_sided(X,Y,x,k,b)
+        ey=regr_model.predict([[x]])[0][0]
+        err_sum+=(ey-y)*(ey-y)
+    return err_sum/n
+
+validator3(data['povrate60'],data['mort_age59_related_postHS'],ker_rect,3)
+
+
+# In[ ]:
+
+
+
+
