@@ -11,7 +11,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import pandas as pd
 
 
-# In[17]:
+# In[2]:
 
 
 data=pd.read_csv('data/headstart.csv')
@@ -21,7 +21,7 @@ len_after=len(data.index)
 print('Dropped',len_before-len_after,'lines that contain NaN.')
 
 
-# In[136]:
+# In[3]:
 
 
 # t is the threshold, k is a kernel function [0,1]->R, and b is the bandwidth
@@ -48,6 +48,10 @@ def regr_sided(X,Y,t,k,b):
     regrL.fit(XL, YL, sample_weight=WL)
     
     return regrL
+
+
+# In[4]:
+
 
 def regr_symmetric(X,Y,t,k,b):
     # Dispose points outside bandwidth
@@ -96,7 +100,7 @@ def regr_symmetric(X,Y,t,k,b):
     return (regrL,regrR)
 
 
-# In[137]:
+# In[5]:
 
 
 threshold=59.1984
@@ -109,7 +113,7 @@ regr_symmetric(data['povrate60'],
                3)
 
 
-# In[138]:
+# In[6]:
 
 
 threshold=59.1984
@@ -122,19 +126,21 @@ regr_symmetric(data['povrate60'],
                3)
 
 
-# In[146]:
+# In[24]:
 
 
 def get_interval(X,Y,a,b):
-    X1=X[np.logical_and(a<X,X<b)]
-    Y1=Y[np.logical_and(a<X,X<b)]
+    return X[np.logical_and(a<X,X<b)],Y[np.logical_and(a<X,X<b)]
+
 def validator3(X,Y,k,b):
-    n=30
+    n=100
     err_sum=0
+    l=np.amin(X)
+    r=np.amax(X)
+    XS=get_interval(X,Y,l+b,r)[0]
     for test_case in range(n):
-        #todo:select from [l+b,r] rather than [l,r]
         #select a random node
-        i=X.index[np.random.choice(len(X.index))]
+        i=XS.index[np.random.choice(len(XS.index))]
         x,y=X[i],Y[i]
         regr_model=regr_sided(X,Y,x,k,b)
         ey=regr_model.predict([[x]])[0][0]
@@ -144,8 +150,15 @@ def validator3(X,Y,k,b):
 validator3(data['povrate60'],data['mort_age59_related_postHS'],ker_rect,3)
 
 
-# In[ ]:
+# In[26]:
 
 
+# t is the threshold
+def cv_test_bandwidth(X,Y,t,k,vald):
+    for i in np.linspace(0.5,40,100):
+        err=(vald(X,Y,k,i)+vald(-X,Y,k,i))/2
+        plt.scatter(i, err, s=0.2, color='blue')
+    plt.show()
 
+cv_test_bandwidth(data['povrate60'],data['mort_age59_related_postHS'],threshold,ker_tri,validator3)
 
