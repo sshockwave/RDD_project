@@ -1,0 +1,5 @@
+Calonico-Cattaneo-Farrell-Titiunik_2018_RESTAT.do (application/x-stata-syntax) 4282 bytes.
+Calonico-Cattaneo-Farrell-Titiunik_2018_RESTAT.R (type/x-r-syntax) 3517 bytes.
+headstart.dta (application/x-stata) 131235 bytes.
+headstart.csv (text/csv) 212842 bytes.
+README.txt (text/plain) 711 bytes.
