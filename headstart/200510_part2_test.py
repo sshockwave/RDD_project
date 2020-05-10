@@ -70,7 +70,7 @@ def bias2(X,Y,t,k,b,regr2):
     return err**2
 
 
-# In[121]:
+# In[122]:
 
 
 def get_regr2(X,Y,t,k,b):
@@ -85,7 +85,7 @@ def get_regr2(X,Y,t,k,b):
 def test_bandwidth2(X,Y,t,k,vald):
     regr2=get_regr2(X,Y,t,ker_rect,1.3)
     for i in np.exp(np.linspace(-1,1,100)):
-        err=(vald(X,Y,t,k,i,regr2)+vald(-X,Y,-t,k,i,regr2))/2
+        err=vald(X,Y,t,k,i,regr2)
         plt.scatter(i, err, s=0.2, color='blue')
     plt.show()
     
