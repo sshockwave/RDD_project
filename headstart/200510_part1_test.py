@@ -43,18 +43,7 @@ def get_interval(X,Y,a,b):
     return X[np.logical_and(a<X,X<b)],Y[np.logical_and(a<X,X<b)]
 
 
-# In[41]:
-
-
-# t is the threshold
-def cv_test_bandwidth(X,Y,t,k,vald):
-    for i in np.exp(np.linspace(-1,2,100)):
-        err=(vald(X,Y,t,k,i)+vald(-X,Y,-t,k,i))/2
-        plt.scatter(i, err, s=0.2, color='blue')
-    plt.show()
-
-
-# In[45]:
+# In[73]:
 
 
 # Left regression only
@@ -77,14 +66,14 @@ def bias1(X,Y,t,k,b):
     a=regr.coef_                        #find the slope of regression
     f1=WL*((a*(X1-Xavg)-(Y1-Yavg))**2)
     f2=WL*(X1-XXavg)**2
-    n=np.size(X)
-    F=XXavg*np.sum(f1)/np.sum(f2)#((n-1)*np.sum(f2))
+    n=np.size(X1)
+    F=XXavg*np.sum(f1)/((n-2)*np.sum(f2))
     return F
 
 
 # The x-axis is the bandwidth, and the y-axis is the error caused by data variance.
 
-# In[46]:
+# In[76]:
 
 
 X=data['povrate60']
@@ -92,11 +81,11 @@ Y=data['mort_age59_related_postHS']
 restriction=Y<=40
 X=X[restriction]
 Y=Y[restriction]
-cv_test_bandwidth(X,Y,threshold,ker_rect,bias1)
-
-
-# In[ ]:
-
-
-
+def test_bandwidth(X,Y,t,k,vald):
+    for i in np.exp(np.linspace(-1,1,100)):
+        err=(vald(X,Y,t,k,i)+vald(-X,Y,-t,k,i))/2
+        plt.scatter(i, err, s=0.2, color='blue')
+    plt.show()
+    
+test_bandwidth(X,Y,threshold,ker_tri,bias1)
 
