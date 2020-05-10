@@ -183,7 +183,7 @@ def test_bandwidth_joined(X,Y,t,k):
         err3=bias2(X,Y,t,k,i,oldregr2)
         plt.scatter(i, err1, s=0.2, color='blue')
         #plt.scatter(i, err2, s=0.2, color='green')
-        plt.scatter(i, err3, s=0.2, color='yellow')
+        plt.scatter(i, err3, s=0.2, color='orange')
         plt.scatter(i, err1+err3, s=0.2, color='black')
         final_regr=regr_sided(X,Y,t,k,i)
         #true_err=(final_regr.predict([[t]])[0][0]-actual_f(t))**2
