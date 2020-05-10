@@ -41,19 +41,19 @@ def get_interval(X,Y,a,b):
 # In[93]:
 
 
-"""
+
 X=data['povrate60'].values
 Y=data['mort_age59_related_postHS'].values
 restriction=Y<=40
 X=X[restriction]
 Y=Y[restriction]
 """
-n=600
+n=300
 X=np.random.rand(n)*10-5+threshold
 def actual_f(x):
     return 0.3*((x-59)**2)+2
 Y=np.vectorize(actual_f)(X)+np.random.rand(n)-0.5
-
+"""
 
 # In[86]:
 
@@ -143,19 +143,20 @@ def oldget_regr2(X,Y,t,k,b):
     print('black: data points, red: predicted by regression, green: hidden true values')
     plt.scatter(X,Y, s=0.2, color='black')
     plt.scatter(X, regr2.predict(X2),s=1.5, color='red')
-    plt.scatter(X, np.vectorize(actual_f)(X),s=1.5, color='yellow')
+    #plt.scatter(X, np.vectorize(actual_f)(X),s=1.5, color='yellow')
     plt.show()
     return regr2
-    
+
+'''    
 def get_regr2(X,Y,t,k,b):
     X,Y=get_interval(X,Y,t-b,t)
-    a=np.zeros((3,int(10*b)))
+    a=np.zeros((3,int(5*b)))
     for i in range(1,np.size(X)):
-        c=int((X[i]-t)*10)
+        c=int((X[i]-t)*5)
         a[1][c]=a[1][c]+X[i]
         a[2][c]=a[2][c]+Y[i]
         a[0][c]=a[0][c]+1
-    for c in range(0,int(10*b)):
+    for c in range(0,int(5*b)):
         a[1][c]=a[1][c]/a[0][c]
         a[2][c]=a[2][c]/a[0][c]
     get_weight=np.vectorize(lambda x:k((np.abs(x-t))/b))
@@ -167,25 +168,26 @@ def get_regr2(X,Y,t,k,b):
     print('black: data points, red: predicted by regression, green: hidden true values')
     plt.scatter(a[1],a[2], s=0.2, color='black')
     plt.scatter(a[1], regr2.predict(X2),s=1.5, color='red')
-    plt.scatter(a[1], np.vectorize(actual_f)(a[1]),s=1.5, color='green')
+    #plt.scatter(a[1], np.vectorize(actual_f)(a[1]),s=1.5, color='green')
     plt.show()
     return regr2
+'''    
 
-regr2=get_regr2(X,Y,threshold,ker_rect,3)
+#regr2=get_regr2(X,Y,threshold,ker_rect,3)
 oldregr2=oldget_regr2(X,Y,threshold,ker_rect,3)
 
 def test_bandwidth_joined(X,Y,t,k):
-    for i in np.exp(np.linspace(-1,1,100)):
+    for i in np.exp(np.linspace(-1,2,100)):
         err1=bias1(X,Y,t,k,i)
-        err2=bias2(X,Y,t,k,i,regr2)
+        #err2=bias2(X,Y,t,k,i,regr2)
         err3=bias2(X,Y,t,k,i,oldregr2)
         plt.scatter(i, err1, s=0.2, color='blue')
-        plt.scatter(i, err2, s=0.2, color='green')
+        #plt.scatter(i, err2, s=0.2, color='green')
         plt.scatter(i, err3, s=0.2, color='yellow')
-        plt.scatter(i, err1+err2, s=0.2, color='black')
+        plt.scatter(i, err1+err3, s=0.2, color='black')
         final_regr=regr_sided(X,Y,t,k,i)
-        true_err=(final_regr.predict([[t]])[0][0]-actual_f(t))**2
-        plt.scatter(i, true_err, s=0.2, color='red')
+        #true_err=(final_regr.predict([[t]])[0][0]-actual_f(t))**2
+        #plt.scatter(i, true_err, s=0.2, color='red')
     print('blue: bias1, green: bias2, black: all bias, red: true bias')
     plt.show()
     
