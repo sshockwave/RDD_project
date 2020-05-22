@@ -81,7 +81,7 @@ for i in range(500):
 plt.show()
 
 
-# In[50]:
+# In[53]:
 
 
 def repeat_test(t,k,b):
@@ -93,6 +93,66 @@ def repeat_test(t,k,b):
     return errsum/cnt
 
 t=59
+for i in np.exp(np.linspace(-0.5,1.5,100)):
+    err=repeat_test(t,lambda x:(1-x)**2,i)
+    plt.scatter(i, err, s=0.2, color='black')
+    err=repeat_test(t,lambda x:2*(1-x),i)
+    plt.scatter(i, err, s=0.2, color='green')
+    err=repeat_test(t,lambda x:1-x**2,i)
+    plt.scatter(i, err, s=0.2, color='orange')
+    err=repeat_test(t,lambda x:1-(1-(1-x)**2)**0.5,i)
+    plt.scatter(i, err, s=0.2, color='blue')
+plt.show()
+
+
+# In[109]:
+
+
+param_set=[]
+for i in range(10):
+    cx=np.random.rand(1)[0]*3-1
+    cy=np.random.rand(1)[0]*4
+    t=np.random.rand(1)[0]*5
+    tx=0
+    if np.abs(cx-1)>np.abs(cx-0):
+        tx=1
+    a=(t-cy)/(cx-tx)**2
+    param_set.append([cx,cy,a])
+for i in range(4):
+    cx=np.random.rand(1)[0]*3-1
+    cy=0
+    t=np.random.rand(1)[0]*5
+    tx=0
+    if np.abs(cx-1)>np.abs(cx-0):
+        tx=1
+    a=(t-cy)/(cx-tx)**2
+    param_set.append([cx,cy,a])
+
+
+# In[110]:
+
+
+def get_ker(param):
+    #a(x-cx)^2+cy
+    cx,cy,a=param
+    return (lambda x:(a*(x-cx)**2+cy))
+
+
+# In[111]:
+
+
+for param in param_set:
+    ker=get_ker(param)
+    vker=np.vectorize(ker)
+    X=np.linspace(0,1,100)
+    Y=vker(X)
+    plt.plot(X,Y,color='red')
+plt.show()
+
+
+# In[ ]:
+
+
 for i in np.exp(np.linspace(-0.5,1.5,100)):
     err=repeat_test(t,lambda x:(1-x)**2,i)
     plt.scatter(i, err, s=0.2, color='black')
