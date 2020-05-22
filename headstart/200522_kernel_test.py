@@ -105,44 +105,43 @@ for i in np.exp(np.linspace(-0.5,1.5,100)):
 plt.show()
 
 
-# In[109]:
+# In[117]:
 
+
+def bezier(p,t):
+    # See https://javascript.info/bezier-curve
+    if len(p)==1:
+        # This is a little bit different from the real bezier-curve
+        # p[0] is (x,y) of the point
+        # but x!=t, and we need to control x
+        # so using (t,y) instead
+        return p[0][1]
+    p2=[]
+    for i in range(len(p)-1):
+        p2.append((1-t)*p[i]+t*p[i+1])
+    return bezier(p2,t)
+
+
+# In[132]:
+
+
+def gen_param():
+    p=np.array([np.array([0,1]),
+                np.random.rand(2),
+                np.random.rand(2),
+                np.array([1,0])])
+    return [lambda x:bezier(p,x),p]
 
 param_set=[]
 for i in range(10):
-    cx=np.random.rand(1)[0]*3-1
-    cy=np.random.rand(1)[0]*4
-    t=np.random.rand(1)[0]*5
-    tx=0
-    if np.abs(cx-1)>np.abs(cx-0):
-        tx=1
-    a=(t-cy)/(cx-tx)**2
-    param_set.append([cx,cy,a])
-for i in range(4):
-    cx=np.random.rand(1)[0]*3-1
-    cy=0
-    t=np.random.rand(1)[0]*5
-    tx=0
-    if np.abs(cx-1)>np.abs(cx-0):
-        tx=1
-    a=(t-cy)/(cx-tx)**2
-    param_set.append([cx,cy,a])
+    param_set.append(gen_param())
 
 
-# In[110]:
-
-
-def get_ker(param):
-    #a(x-cx)^2+cy
-    cx,cy,a=param
-    return (lambda x:(a*(x-cx)**2+cy))
-
-
-# In[111]:
+# In[133]:
 
 
 for param in param_set:
-    ker=get_ker(param)
+    ker=param[0]
     vker=np.vectorize(ker)
     X=np.linspace(0,1,100)
     Y=vker(X)
