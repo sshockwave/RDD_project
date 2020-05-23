@@ -11,7 +11,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import pandas as pd
 
 
-# In[22]:
+# In[147]:
 
 
 def actual_f(x):
@@ -137,29 +137,55 @@ for i in range(10):
     param_set.append(gen_param())
 
 
-# In[133]:
+# In[149]:
 
 
-for param in param_set:
-    ker=param[0]
+def plot_ker(ker):
     vker=np.vectorize(ker)
     X=np.linspace(0,1,100)
     Y=vker(X)
     plt.plot(X,Y,color='red')
+
+for param in param_set:
+    plot_ker(param[0])
+plt.show()
+
+
+# In[155]:
+
+
+last_pick=None
+result_curve_x=[]
+result_curve_y=[]
+result_cut_point=[]
+t=59
+for b in np.exp(np.linspace(-0.5,1.5,100)):
+    err_min=1e100
+    pick=None
+    for param in param_set:
+        ker=param[0]
+        err=repeat_test(t,ker,b)
+        if err<err_min:
+            err_min=err
+            pick=param
+    if pick!=last_pick:
+        last_pick=pick
+        result_cut_point.append(b)
+        print('From',b)
+        print(pick[1:])
+        plot_ker(pick[0])
+        plt.plot([pick[1][0][0],pick[1][1][0]],[pick[1][0][1],pick[1][1][1]],color='green')
+        plt.plot([pick[1][2][0],pick[1][3][0]],[pick[1][2][1],pick[1][3][1]],color='green')
+        plt.show()
+    result_curve_x.append(b)
+    result_curve_y.append(err_min)
+plt.plot(result_curve_x,result_curve_y,color='red')
+for 
 plt.show()
 
 
 # In[ ]:
 
 
-for i in np.exp(np.linspace(-0.5,1.5,100)):
-    err=repeat_test(t,lambda x:(1-x)**2,i)
-    plt.scatter(i, err, s=0.2, color='black')
-    err=repeat_test(t,lambda x:2*(1-x),i)
-    plt.scatter(i, err, s=0.2, color='green')
-    err=repeat_test(t,lambda x:1-x**2,i)
-    plt.scatter(i, err, s=0.2, color='orange')
-    err=repeat_test(t,lambda x:1-(1-(1-x)**2)**0.5,i)
-    plt.scatter(i, err, s=0.2, color='blue')
-plt.show()
+
 
