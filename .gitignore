@@ -130,3 +130,9 @@ dmypy.json
 
 # Ignore VIM files
 [._]*.swp
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.synctex.gz
