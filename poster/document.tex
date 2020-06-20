@@ -42,14 +42,29 @@
 }
 \newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
 
+% Custom defined operators
+\DeclareMathOperator{\Do}{do}
+
 \begin{document}
 \homework{Poster Report: RDD}{Kai Su,}{Qihang Chen}
 
 \section{Analyzing Baysian Network}
 \subsection{Introduction to RDD}
-When the running variable $X$ takes value at different side of a threshold value $t$, there will be a treatment($w=1$) having a effect on the output $Y$ on one side and no treatment($w=0$) on the other side. Our goal is to calculate the true treatment effect on output $Y$. 
+When the running variable $X$ takes value at different side of a threshold value $t$, there will be a treatment(marked $w=1$) having an effect on the output $Y$ on one side of $X=t$ and no treatment(marked $w=0$) on the other side. Our goal is to measure the average effect $\tau$ solely caused by the treatment. That is, $\tau=E[Y|\Do(W)=1]-E[Y|\Do(W)=0]$.
 
-In most cases, we are lack of data near the threshold, difficult for us to calculate the treatment effect on the threshold directly. Thus we need to use linear regression to fit the relation between $X$ and $Y$ on both side and willing to predict the expected $Y$ when $X=t_+$ and $X=t_-$. 
+Such effect appears as a sudden increase or decrease of $y$ in the neighborhood of $X=t$. Therefore, $\tau$ is traditionally estimated using the see effect of $W$. Formally put,
+
+\begin{equation}
+   \hat\tau=\lim_{x\to t^+}E[Y|X=x]-\lim_{x\to t^-}E[Y|X=x].
+\end{equation}
+
+For simplicity, denote 
+\begin{align}
+   E[Y|X=t_+]=\lim_{x\to t^+}E[Y|X=x],\\
+   E[Y|X=t_-]=\lim_{x\to t^-}E[Y|X=x].
+\end{align}
+
+However, we are lack of data near the threshold in most cases, difficult for us to calculate these values on the threshold directly. Thus we need some sort of regression to infer the relation between $X$ and $Y$ on both sides so as to predict $E[Y|X=t_+]$ and $E[Y|X=t_-]$.
 
 The data near the threshold is more valuable, thus we need to consider bandwidth $b$(data having distance larger than $b$ to the threshold will not be taken to regression) and kernel $k$(appending weight to data) in order to make more use of more valuable data.
 
