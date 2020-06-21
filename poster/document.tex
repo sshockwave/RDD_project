@@ -55,7 +55,7 @@ When the running variable $X$ takes value at different side of a threshold value
 Such effect appears as a sudden increase or decrease of $y$ in the neighborhood of $X=t$(See Fig.\ref{fig:rddintro}). Therefore, $\tau$ is traditionally estimated using the see effect of $W$. Formally put,
 
 \begin{equation}
-   \hat\tau=\lim_{x\to t^+}E[Y|X=x]-\lim_{x\to t^-}E[Y|X=x].
+   \hat\tau=\lim_{x\to t^+}E[Y|X=x]-\lim_{x\to t^-}E[Y|X=x].\label{eqn:est_lim}
 \end{equation}
 
 For simplicity, denote 
@@ -89,10 +89,23 @@ Basically, running variable $X$ will decide $W$ and affect $Y$; $W$ will have ef
 \end{figure}
 
 \subsection*{bandwidth}
-After selecting a bandwidth $b$, it will cause a selection of data, thus there will be a backdoor path between $X$ and $Y$ caused by $b$. Then the see effect observed by regression between $X$ and $Y$ is not the true causal effect, leading to bias. To eliminate this bias, we need to adjust the way of sampling by changing kernel. See Fig.\ref{fig:bn_with_bdw}.
+When the bandwidth is sufficiently small,
+\begin{align}
+   P[Y|W=0]\approx P[Y|X=t_-],\\
+   P[Y|W=1]\approx P[Y|X=t_+].
+\end{align}
+
+Then
+\begin{align}
+   \tau=E[Y|\Do(W)=1]-E[Y|\Do(w)=0]\approx E[Y|X=t_+]-E[Y|X=t_-]=\hat\tau,
+\end{align}
+
+proving that the traditional estimation in Eqn.(\ref{eqn:est_lim}) is unbiased.
+
+In contrast, if the bandwidth $b$ is non-negligible, this selection of data specified by $b$ will cause a backdoor path between $X$ and $Y$. (See Fig.\ref{fig:bn_with_bdw}) Then the see effect observed by regression between $X$ and $Y$ is not the true causal effect, leading to a bias. To eliminate this bias, we need to adjust the way of sampling by changing the kernel.
 
 \subsection*{covariates}
-Sometimes there are not only running variable $X$ and $Y$, but also many other variables $Z$, called covariates, may have effect on $Y$. If they are independent with $X$, the regression still works. However in some cases, $Z$ will affect both $X$ and $Y$, creating a backdoor path between $X$ and $Y$. (See Fig.\ref{bn_with_covar})
+Sometimes there are not only running variables $X$ and $Y$, but also many other variables $Z$, called covariates, may have effect on $Y$. If they are independent with $X$, the regression still works. However in some cases, $Z$ will affect both $X$ and $Y$, creating a backdoor path between $X$ and $Y$. (See Fig.\ref{bn_with_covar})
 
 In order to eliminate this bias, we need to find a bandwidth, to make sure among the included samples, $Z$ is independent with $X$.
 
