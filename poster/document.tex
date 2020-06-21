@@ -138,11 +138,38 @@ When $b\to 0$, less and less data stay within the bandwidth, so the variance in 
 
 \subsection{Using kernel to elimimate bias caused by bandwidth}
 
-In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples. 
-%这里我好像有点忘了当时编号和数据的关系了，你帮忙解释一下每组代表什么样的分布
+In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples. (See table \ref{table:kernels_test})
 
-We randomly generated 500 groups of data and 200 different types of kernels. For each kernel, we calculate the difference of $Y$ at threshold compared with $Y(t)$ by True $X-Y$ relation in those 500 groups of data, getting the average to show the performance of the kernel. Thus we get the best kernel for different bandwidth.
-%你先介绍一下典型结果
+\begin{figure}[h]
+	\centering
+   \begin{tabular}{|c|c|c|c|}
+      \hline
+      $y=$&$0.2(x-59)^2+2$&$-0.2(x-59)^2-0.4(x-59)+2$&$0.1(x-59)^3+2$\\
+      \hline
+      Dense middle&case00&case01&case02\\
+      \hline
+      Sparse middle&case10&case11&case12\\
+      \hline
+      Dense cutoff&case20&case21&case22\\
+      \hline
+      Sparse cutoff&case30&case31&case32\\
+      \hline
+   \end{tabular}
+   \caption{$X-Y$ relations and data distributions}
+   \label{table:kernels_test}
+\end{figure}
+
+We randomly generated 500 groups of data and 200 different types of kernels using bezier curves. For each kernel, we calculate the difference of $Y$ at threshold compared with $Y(t)$ by True $X-Y$ relation in those 500 groups of data, getting the average to show the performance of the kernel. Thus we get the best kernel for different bandwidth.
+
+\begin{figure}
+   \includegraphics{case30_frame0000000.png}
+   \includegraphics{case30_frame0000031.png}
+   \includegraphics{case30_frame0000049.png}
+   \caption{Illustrated best kernels under different bandwidths}
+   \label{fig:kernels}
+\end{figure}
+
+A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel. The kernel first chooses to spread out the weight evenly so that more data are used to lower the variance of estimation. As the bandwidth $b$ becomes larger, the weights concentrate to the cutoff to lower the bias caused by the nonlinearity in $X-Y$ relation.
 
 \subsection{ Differences after adding covariates}
 After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels may become different.
