@@ -153,13 +153,12 @@ After adding covariates, there will be another backdoor path caused by $Z$, and 
 
 In some articles, cross validation method is used for selecting a optimal bandwidth. However this has not always accurate because samples near threshold may not have similar distribution and $X-Y$ relation.
 
-When bandwidth is large, the $X-Y$ relation's nonlinearity may cause bias if using linear regression. When bandwidth is small, there may be too few samples, leading to a high variation.
+We have these ways to quantify the expected error for different bandwidth caused by two aspects mentioned in section \ref{sec:obstacles}:
 
-We have these ways to quantify the expected error for different bandwidth caused by two aspects above:
-
-(1) Use bandwidth $b$, suppose the linear regression has the result $Y=a(X-t)+b$, we use a formula to calculate the standard derivation of $b$ two represent the expected error caused by lack of data near threshold.
-
-(2) First use a quadratic hypothesis function on regression to find out a curve showing approximate quadratic relationship between $X-Y$(do not use bandwitdh $b$). Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold. 
+\begin{enumerate}
+   \item[(a)] Use bandwidth $b$, suppose the linear regression has the result $Y=a(X-t)+b$, we use a formula to calculate the standard derivation of $b$ two represent the expected error caused by lack of data near threshold.
+   \item[(b)] First use a quadratic hypothesis function on regression to find out a curve showing approximate quadratic relationship between $X-Y$(do not use bandwitdh $b$). Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold. 
+\end{enumerate}
 
 Then we find a bandwidth who has least sum of those two kind of errors, just the optimal bandwidth we need.
 
