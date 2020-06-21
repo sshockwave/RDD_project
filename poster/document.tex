@@ -66,7 +66,7 @@ For simplicity, denote
 
 However, we are lack of data near the threshold in most cases, difficult for us to calculate these values on the threshold directly. Thus we need some regression to infer the relation between $X$ and $Y$ so as to predict $E[Y|X=t_+]$ and $E[Y|X=t_-]$.
 
-A common practice is to apply linear regression on both sides. The data near the threshold is more valuable, thus we can set a bandwidth $b$, which is the largest distance where data are taken into account; and a kernel $k$, which assigns weights to data.
+A common practice is to apply linear regression on both sides. The data near the threshold is more valuable, thus we can set a bandwidth $b$, which is the largest distance where data are taken into account; and a kernel $k$, which assigns weights to data. Denote such an estimator as $\hat\tau(b,k)$ for simplicity.
 
 \begin{figure}[h]
 	\centering
@@ -76,6 +76,8 @@ A common practice is to apply linear regression on both sides. The data near the
 \end{figure}
 
 \subsection{Baysian Network}
+%对应作业第一部分
+
 Basically, running variable $X$ will decide $W$ and affect $Y$; $W$ will have effect on $Y$, as in Fig.\ref{fig:basic_rd_bns}.
 
 \begin{figure}[h]
@@ -91,8 +93,8 @@ Basically, running variable $X$ will decide $W$ and affect $Y$; $W$ will have ef
 \subsection*{bandwidth}
 When the bandwidth is sufficiently small,
 \begin{align}
-   P[Y|W=0]\approx P[Y|X=t_-],\\
-   P[Y|W=1]\approx P[Y|X=t_+].
+   P(Y|W=0)\approx P(Y|X=t_-),\\
+   P(Y|W=1)\approx P(Y|X=t_+).
 \end{align}
 
 Then
@@ -116,6 +118,21 @@ In order to eliminate this bias, we need to find a bandwidth, to make sure among
    \label{bn_with_covar}
 	\includegraphics[scale=0.5]{Figure_4.png}
 \end{figure}
+
+\subsection{Obstacles}
+\label{sec:obstacles}
+%对应作业第二部分
+
+Under the BN shown in Fig.\ref{fig:bn_with_bdw}, the performance of the estimator $\hat \tau(b,k)$ is restricted by two factors:
+
+\begin{enumerate}
+   \item[(a)] Large variance due to lack of data;
+   \item[(b)] Bias caused by fitting non-linear $X-Y$ relation with linear regression.
+\end{enumerate}
+
+When $b\to 0$, less and less data stay within the bandwidth, so the variance in (a) becomes significant. The bias in (b) converges to $0$ under smoothness assumption on the $X-Y$ relation. The conclusion is opposite when $b\to+\infty$.
+
+%TODO: Covariate引发的问题
 
 \section{Experiment and Discussion}
 
