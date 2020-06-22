@@ -93,16 +93,17 @@ Basically, running variable $X$ will decide $W$ and affect $Y$; $W$ will have ef
 \subsection*{bandwidth}
 When the bandwidth is sufficiently small,
 \begin{align}
-   P(Y|W=0)\approx P(Y|X=t_-),\\
-   P(Y|W=1)\approx P(Y|X=t_+).
+   P(Y|W=0,X=t)\approx P(Y|X=t_-),\\
+   P(Y|W=1,X=t)\approx P(Y|X=t_+).
 \end{align}
 
 Then
 \begin{align}
-   \tau=E[Y|\Do(W)=1]-E[Y|\Do(w)=0]\approx E[Y|X=t_+]-E[Y|X=t_-]=\hat\tau,
+   \tau&=E[Y|\Do(W=1),X=t]-E[Y|\Do(w=0),X=t]\\
+   &\approx E[Y|X=t_+]-E[Y|X=t_-]=\hat\tau,
 \end{align}
 
-proving that the traditional estimation in Eqn.(\ref{eqn:est_lim}) is unbiased.
+\noindent proving that the traditional estimation in Eqn.(\ref{eqn:est_lim}) is unbiased.
 
 In contrast, if the bandwidth $b$ is non-negligible, this selection of data specified by $b$ will cause a backdoor path between $X$ and $Y$. (See Fig.\ref{fig:bn_with_bdw}) Then the see effect observed by regression between $X$ and $Y$ is not the true causal effect, leading to a bias. To eliminate this bias, we need to adjust the way of sampling by changing the kernel.
 
@@ -117,6 +118,7 @@ In order to eliminate this bias, we need to find a bandwidth, to make sure among
    \caption{BN with covariates}
    \label{bn_with_covar}
 	\includegraphics[scale=0.5]{Figure_4.png}
+	\caption{eliminate $Z\rightarrow X$ path}
 \end{figure}
 
 \subsection{Obstacles}
@@ -138,7 +140,7 @@ When $b\to 0$, less and less data stay within the bandwidth, so the variance in 
 
 \subsection{Using kernel to elimimate bias caused by bandwidth}
 
-In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples. (See table \ref{table:kernels_test})
+In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples (See table \ref{table:kernels_test}). The cutoff is at $X=59$.
 
 \begin{figure}[h]
 	\centering
@@ -162,14 +164,27 @@ In this section we do not consider covariates. We generate data by different $X-
 We randomly generated 500 groups of data and 200 different types of kernels using bezier curves. For each kernel, we calculate the difference of $Y$ at threshold compared with $Y(t)$ by True $X-Y$ relation in those 500 groups of data, getting the average to show the performance of the kernel. Thus we get the best kernel for different bandwidth.
 
 \begin{figure}
-   \includegraphics{case30_frame0000000.png}
-   \includegraphics{case30_frame0000031.png}
-   \includegraphics{case30_frame0000049.png}
+   \centering
+   \includegraphics[scale=0.8]{case30_frame0000000.png}
+   \includegraphics[scale=0.8]{case30_frame0000031.png}
+   \includegraphics[scale=0.8]{case30_frame0000049.png}
    \caption{Illustrated best kernels under different bandwidths}
    \label{fig:kernels}
 \end{figure}
+\subsection*{Kernel varies with bandwidth}
 
-A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel. The kernel first chooses to spread out the weight evenly so that more data are used to lower the variance of estimation. As the bandwidth $b$ becomes larger, the weights concentrate to the cutoff to lower the bias caused by the nonlinearity in $X-Y$ relation.
+A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel.At a fixed bandwidth, the kernel is not just concentrating near the cutoff, but first chooses to spread out the weight to larger distance to the cutoff when bandwidth is small.
+
+This consequence results from the randomness of data. Too few samples will cause large uncertainty. Giving more weight to those father samples has the similar effect of obtaining more samples, in order to lower the variance of estimation. As the bandwidth $b$ becomes larger, the weights concentrate to the cutoff to lower the bias caused by the nonlinearity in $X-Y$ relation.
+
+\subsection*{Kernel varies with sample distribution}
+
+Another observation is that, the distribution of samples along $X$ axis really affect the performance of kernels. The reason is the distribution of samples affect the randomness of sampling, thus we need to use kernel to adjust the sampling method.
+
+Comparing the result in different rows(in html files, can not be shown in pdf), we can find a regular pattern that adding weight on those samples where samples along the $X$ axis are sparse will give better performance. 
+
+The reason is intuitive. If the samples are exactly randomly distributed, it will be easier for us to infer the information from data. But if some areas on $X$ axis has larger density of samples, we shall give less weight to them in order to keep the sampling method ``seems to be still random''. Then the kernel will trend to samples in the sparse area.
+
 
 \subsection{ Differences after adding covariates}
 After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels may become different.
