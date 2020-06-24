@@ -90,7 +90,7 @@ Basically, running variable $X$ will decide $W$ and affect $Y$; $W$ will have ef
    \label{fig:bn_with_bdw}
 \end{figure}
 
-\subsection*{bandwidth}
+\subsubsection*{bandwidth}
 When the bandwidth is sufficiently small,
 \begin{align}
    P(Y|W=0,X=t)\approx P(Y|X=t_-),\\
@@ -107,7 +107,7 @@ Then
 
 In contrast, if the bandwidth $b$ is non-negligible, this selection of data specified by $b$ will cause a backdoor path between $X$ and $Y$. (See Fig.\ref{fig:bn_with_bdw}) Then the see effect observed by regression between $X$ and $Y$ is not the true causal effect, leading to a bias. To eliminate this bias, we need to adjust the way of sampling by changing the kernel.
 
-\subsection*{covariates}
+\subsubsection*{covariates}
 Sometimes there are not only running variables $X$ and $Y$, but also many other variables $Z$, called covariates, may have effect on $Y$. If they are independent with $X$, the regression still works. However in some cases, $Z$ will affect both $X$ and $Y$, creating a backdoor path between $X$ and $Y$. (See Fig.\ref{bn_with_covar})
 
 \begin{figure}[h]
@@ -169,13 +169,13 @@ We randomly generated 500 groups of data and 200 different types of kernels usin
    \caption{Illustrated best kernels under different bandwidths}
    \label{fig:kernels}
 \end{figure}
-\subsection*{Kernel varies with bandwidth}
+\subsubsection*{Kernel varies with bandwidth}
 
 A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel. At a fixed bandwidth, the kernel does not gather around the cutoff at first, but chooses to spread out the weight to larger distance to the cutoff when bandwidth is small.
 
 This initial behavior of the kernel is related to the error mentioned in section \ref{sec:obstacles}(a). The lack of samples cause large uncertainty. Assigning more weight to those farther samples basically equivalents to obtaining more samples, and by doing so, the kernel is able to lower the variance of estimation. As the bandwidth $b$ becomes larger, the weights concentrate to the cutoff to lower the bias caused by the nonlinearity in $X-Y$ relation, corresponding to section \ref{sec:obstacles}(b).
 
-\subsection*{Kernel varies with sample distribution}
+\subsubsection*{Kernel varies with sample distribution}
 
 Another observation is that, the distribution of samples along $X$ axis really affect the performance of kernels. The reason is the distribution of samples affect the randomness of sampling, thus we need to use kernel to adjust the sampling method.
 
@@ -190,7 +190,7 @@ In order to eliminate this bias, we need to find a bandwidth, to make sure among
 
 
 \section{Other Attempts}
-\subsection*{A better way to find best bandwidth}
+\subsubsection*{A better way to find best bandwidth}
 
 In some articles, cross validation method is used for selecting a optimal bandwidth. However this has not always accurate because samples near threshold may not have similar distribution and $X-Y$ relation.
 
