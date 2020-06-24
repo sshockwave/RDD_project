@@ -48,7 +48,7 @@
 \begin{document}
 \homework{Poster Report: RDD}{Kai Su,}{Qihang Chen}
 
-\section{Analyzing Baysian Network}
+\section{Analysis with Baysian Network}
 \subsection{Introduction to RDD}
 When the running variable $X$ takes value at different side of a threshold value $t$, there will be a treatment(marked $w=1$) having an effect on the output $Y$ on one side of $X=t$ and no treatment(marked $w=0$) on the other side. Our goal is to measure the average effect $\tau$ solely caused by the treatment. That is, $\tau=E[Y|\Do(W)=1]-E[Y|\Do(W)=0]$.
 
@@ -82,10 +82,10 @@ Basically, running variable $X$ will decide $W$ and affect $Y$; $W$ will have ef
 
 \begin{figure}[h]
 	\centering
-   \includegraphics[scale=0.5]{Figure_1.png}
+   \includegraphics[scale=0.3]{Figure_1.png}
    \caption{The basic BN for RDD}
    \label{fig:basic_rd_bns}
-   \includegraphics[scale=0.5]{Figure_2.png}
+   \includegraphics[scale=0.3]{Figure_2.png}
    \caption{BN with bandwidth}
    \label{fig:bn_with_bdw}
 \end{figure}
@@ -110,15 +110,13 @@ In contrast, if the bandwidth $b$ is non-negligible, this selection of data spec
 \subsection*{covariates}
 Sometimes there are not only running variables $X$ and $Y$, but also many other variables $Z$, called covariates, may have effect on $Y$. If they are independent with $X$, the regression still works. However in some cases, $Z$ will affect both $X$ and $Y$, creating a backdoor path between $X$ and $Y$. (See Fig.\ref{bn_with_covar})
 
-In order to eliminate this bias, we need to find a bandwidth, to make sure among the included samples, $Z$ is independent with $X$.
-
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.5]{Figure_3.png}
+	\includegraphics[scale=0.3]{Figure_3.png}
    \caption{BN with covariates}
    \label{bn_with_covar}
-	\includegraphics[scale=0.5]{Figure_4.png}
-	\caption{eliminate $Z\rightarrow X$ path}
+	\includegraphics[scale=0.3]{Figure_4.png}
+	\caption{Eliminating $Z\rightarrow X$}
 \end{figure}
 
 \subsection{Obstacles}
@@ -142,7 +140,7 @@ When $b\to 0$, less and less data stay within the bandwidth, so the variance in 
 
 In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples (See table \ref{table:kernels_test}). The cutoff is at $X=59$.
 
-\begin{figure}[h]
+\begin{table}[h]
 	\centering
    \begin{tabular}{|c|c|c|c|}
       \hline
@@ -159,23 +157,23 @@ In this section we do not consider covariates. We generate data by different $X-
    \end{tabular}
    \caption{$X-Y$ relations and data distributions}
    \label{table:kernels_test}
-\end{figure}
+\end{table}
 
 We randomly generated 500 groups of data and 200 different types of kernels using bezier curves. For each kernel, we calculate the difference of $Y$ at threshold compared with $Y(t)$ by True $X-Y$ relation in those 500 groups of data, getting the average to show the performance of the kernel. Thus we get the best kernel for different bandwidth.
 
 \begin{figure}
    \centering
-   \includegraphics[scale=0.8]{case30_frame0000000.png}
-   \includegraphics[scale=0.8]{case30_frame0000031.png}
-   \includegraphics[scale=0.8]{case30_frame0000049.png}
+   \includegraphics[scale=0.3]{case30_frame0000000.png}
+   \includegraphics[scale=0.3]{case30_frame0000031.png}
+   \includegraphics[scale=0.3]{case30_frame0000049.png}
    \caption{Illustrated best kernels under different bandwidths}
    \label{fig:kernels}
 \end{figure}
 \subsection*{Kernel varies with bandwidth}
 
-A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel.At a fixed bandwidth, the kernel is not just concentrating near the cutoff, but first chooses to spread out the weight to larger distance to the cutoff when bandwidth is small.
+A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel. At a fixed bandwidth, the kernel does not gather around the cutoff at first, but chooses to spread out the weight to larger distance to the cutoff when bandwidth is small.
 
-This consequence results from the randomness of data. Too few samples will cause large uncertainty. Giving more weight to those father samples has the similar effect of obtaining more samples, in order to lower the variance of estimation. As the bandwidth $b$ becomes larger, the weights concentrate to the cutoff to lower the bias caused by the nonlinearity in $X-Y$ relation.
+This initial behavior of the kernel is related to the error mentioned in section \ref{sec:obstacles}(a). The lack of samples cause large uncertainty. Assigning more weight to those farther samples basically equivalents to obtaining more samples, and by doing so, the kernel is able to lower the variance of estimation. As the bandwidth $b$ becomes larger, the weights concentrate to the cutoff to lower the bias caused by the nonlinearity in $X-Y$ relation, corresponding to section \ref{sec:obstacles}(b).
 
 \subsection*{Kernel varies with sample distribution}
 
@@ -185,9 +183,10 @@ Comparing the result in different rows(in html files, can not be shown in pdf), 
 
 The reason is intuitive. If the samples are exactly randomly distributed, it will be easier for us to infer the information from data. But if some areas on $X$ axis has larger density of samples, we shall give less weight to them in order to keep the sampling method ``seems to be still random''. Then the kernel will trend to samples in the sparse area.
 
+\subsection{Using weights to eliminate bias caused by confound effects}
+After adding covariates, there might be another backdoor path caused by $Z$, and the perfomance of different kernels may become different.
 
-\subsection{ Differences after adding covariates}
-After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels may become different.
+In order to eliminate this bias, we need to find a bandwidth, to make sure among the included samples, $Z$ is independent with $X$.
 
 
 \section{Other Attempts}
