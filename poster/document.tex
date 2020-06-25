@@ -138,7 +138,7 @@ When $b\to 0$, less and less data stay within the bandwidth, so the variance in 
 
 \section{Experiment and Discussion}
 
-\subsection{Using kernel to eliminate bias caused by bandwidth}
+\subsection{Using kernel to reduce bias caused by bandwidth}
 
 In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples (See table \ref{table:kernels_test}). The cutoff is at $X=59$.
 
@@ -237,7 +237,7 @@ We have these ways to quantify the expected error for different bandwidth caused
 
 \begin{enumerate}
    \item[(a)] Use bandwidth $b$, suppose the linear regression has the result $Y=a(X-t)+b$, we use a formula to calculate the standard derivation of $b$ to represent the expected error caused by lack of data near threshold.
-   \item[(b)] First use a quadratic hypothesis function on regression to find out a curve showing approximate quadratic relationship between $X-Y$(do not use bandwitdh $b$). Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold. 
+   \item[(b)] First use a quadratic hypothesis function on regression to find out a curve showing approximate quadratic relationship between $X-Y$(do not use bandwidth $b$). Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold. 
 \end{enumerate}
 
 Then we find a bandwidth who has least sum of those two kind of errors, just the optimal bandwidth we need. (See table \ref{table:opt bandwidth})
