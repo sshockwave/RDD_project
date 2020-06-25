@@ -67,7 +67,7 @@ For simplicity, denote
 
 However, we are lack of data near the threshold in most cases, difficult for us to calculate these values on the threshold directly. Thus we need some regression to infer the relation between $X$ and $Y$ so as to predict $E[Y|X=t_+]$ and $E[Y|X=t_-]$.
 
-A common practice is to apply linear regression on both sides. The data near the threshold is more valuable, thus we can set a bandwidth $b$, which is the largest distance where data are taken into account; and a kernel $k$, which assigns weights to data. Denote such an estimator as $\hat\tau(b,k)$ for simplicity.
+A common practice is to apply linear regression on both sides. The data near the threshold is more valuable, thus we can set a bandwidth $b$, which is the largest distance where data are taken into account; and a kernel $k$, which assigns weights to data. Denote such an estimator as $\hat\tau(b,k)$.
 
 \begin{figure}[h]
 	\centering
