@@ -335,12 +335,12 @@ which requires
 \begin{align}
    P'(x,z)=&P'(x)P'(z)\\
    \omega(x)P(x,z)=&\omega(x)P(x)P'(z)\\
-   P(x,z)=&P(x)P'(z)\\
-   \frac{P(x,z)}{P(x)}=&P'(z)\\
-   P(z\mid x)=&P'(z),
+   P(x,z)=&P(x)P'(z)\label{eqn:indep}\\
+   \sum_x P(x,z)=&\sum_xP(x)P'(z)\\
+   P(z)=&P'(z)\label{eqn:z_zpai}
 \end{align}
 
-which is a value independent of $x$.
+Combining Eqn.(\ref{eqn:indep})(\ref{eqn:z_zpai}), $P(x,z)=P(x)P(z)$.
 Therefore, $Z\to X$ can be removed only if $X\indep Z$ are independent at the very beginning.
 
 If we try to remove $Z\to Y$ instead, then $Y\indep Z\mid X$.
