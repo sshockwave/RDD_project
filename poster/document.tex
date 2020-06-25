@@ -183,7 +183,7 @@ Another observation is that, the distribution of samples along $X$ axis really a
 
 Comparing the result in different rows(in html files, can not be shown in pdf), we can find a regular pattern that adding weight on those samples where samples along the $X$ axis are sparse will give better performance. 
 
-The reason is intuitive. If the samples are exactly randomly distributed, it will be easier for us to infer the information from data. But if some areas on $X$ axis has larger density of samples, we shall give less weight to them in order to keep the sampling method ``seems to be still random''. Then the kernel will trend to samples in the sparse area.
+It is intuitive to explain this observation. If the samples are evenly distributed, it is easier to infer the information from data. But if some areas on $X$ axis has larger density of samples, giving less weight to them can mimic an evenly distributed set of data. Then the kernel will trend to trust samples in the sparse area.
 
 \subsection{ Differences after adding covariates}
 We generate data by different $X-Y$ relation and different ways $Z$ affect $X,Y$ (See table \ref{table:kernels_test adding covariates}) where the samples are uniformly distributed.
