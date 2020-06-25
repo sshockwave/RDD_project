@@ -138,7 +138,7 @@ When $b\to 0$, less and less data stay within the bandwidth, so the variance in 
 
 \section{Experiment and Discussion}
 
-\subsection{Using kernel to reduce bias caused by bandwidth}
+\subsection{Using kernels to reduce bias caused by bandwidth}
 
 In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples (See table \ref{table:kernels_test}). The cutoff is at $X=59$.
 
@@ -171,15 +171,15 @@ We randomly generated 500 groups of data and 200 different types of kernels usin
    \caption{Illustrated best kernels under different bandwidths}
    \label{fig:kernels}
 \end{figure}
-\subsubsection*{Kernel varies with bandwidth}
+\subsubsection*{Kernels vary with bandwidth}
 
 A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel. At a fixed bandwidth, the kernel does not gather around the cutoff at first, but chooses to spread out the weight to larger distance to the cutoff when bandwidth is small.
 
 This initial behavior of the kernel is related to the error mentioned in section \ref{sec:obstacles}(a). The lack of samples cause large uncertainty. Assigning more weight to those farther samples basically equivalents to obtaining more samples, and by doing so, the kernel is able to lower the variance of estimation. As the bandwidth $b$ becomes larger, the weights concentrate to the cutoff to lower the bias caused by the nonlinearity in $X-Y$ relation, corresponding to section \ref{sec:obstacles}(b).
 
-\subsubsection*{Kernel varies with sample distribution}
+\subsubsection*{Kernels vary with density of data}
 
-Another observation is that, the distribution of samples along $X$ axis really affect the performance of kernels. The reason is the distribution of samples affect the randomness of sampling, thus we need to use kernel to adjust the sampling method.
+Another observation is that, the distribution of samples along $X$ axis really affect the performance of kernels. The reason is the distribution of samples affect the randomness of sampling, thus we need to use the kernel to adjust the sampling method.
 
 Comparing the result in different rows(in html files, can not be shown in pdf), we can find a regular pattern that adding weight on those samples where samples along the $X$ axis are sparse will give better performance. 
 
