@@ -204,7 +204,7 @@ We generate data by different $X-Y$ relation and different ways $Z$ affect $X,Y$
 
 After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels becomes different (See Fig.\ref{fig:kernels2} ). This tells us our selection of bandwidth should concern the effect of covariates, and it will be unbiased only when the BNS is the same as Fig.\ref{bn_with_covar2}.
 
-\begin{figure}[h]
+\begin{table}[h]
 	\centering
 	\begin{tabular}{|c|c|c|c|}
 		\hline
@@ -221,7 +221,7 @@ After adding covariates, there will be another backdoor path caused by $Z$, and 
 	\end{tabular}
 	\caption{$X-Y$ relations and ways of adding $Z$}
 	\label{table:kernels_test adding covariates}
-\end{figure}
+\end{table}
 
 \subsection{Using weights to eliminate bias caused by confound effects}
 After adding covariates, there might be another backdoor path caused by $Z$, and the perfomance of different kernels may become different.
