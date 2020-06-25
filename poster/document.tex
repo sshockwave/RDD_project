@@ -231,7 +231,7 @@ In order to eliminate this bias, we need to find a bandwidth, to make sure among
 \section{Other Attempts}
 \subsubsection*{A better way to find best bandwidth}
 
-In some articles, cross validation method is used for selecting a optimal bandwidth. However this has not always accurate because samples near threshold may not have similar distribution and $X-Y$ relation.
+In some articles, cross validation method is used for selecting a optimal bandwidth. However this has not always accurate since the samples near the threshold may not have similar $X-Y$ relation and density of data. Especially, in many cases, data near the threshold is under subjective manipulation, making a great turbulance in the density of data. This is not good for the selection of bandwidth.
 
 We have these ways to quantify the expected error for different bandwidth caused by two aspects mentioned in section \ref{sec:obstacles}:
 
