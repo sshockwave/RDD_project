@@ -45,6 +45,7 @@
 
 % Custom defined operators
 \DeclareMathOperator{\Do}{do}
+\newcommand{\indep}{\perp \!\!\! \perp}
 
 \begin{document}
 \homework{Poster Report: RDD}{Kai Su,}{Qihang Chen}
@@ -197,7 +198,19 @@ Finally, we find a bandwidth who has least sum of those two kind of errors, whic
 
 \subsection{Using kernels to reduce bias caused by bandwidth}
 
-In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples (See table \ref{table:kernels_test}). The cutoff is at $X=59$.
+In this section we do not consider covariates.
+There are a vast types of kernels.
+Triangle and rectangle kernels are used frequently in previous studies.
+We extracted some properties of these kernels:
+\begin{enumerate}
+   \item smooth;
+   \item monotonic;
+   \item non-zero within the bandwidth, leaving zeros outside.
+\end{enumerate}
+
+In common sense, a good kernel is very likely to contain these properties.
+So we decided to test against the class of bezier curves,
+which can mimic most of such function.
 
 \begin{table}[h]
 	\centering
@@ -218,7 +231,10 @@ In this section we do not consider covariates. We generate data by different $X-
    \label{table:kernels_test}
 \end{table}
 
-We randomly generated 500 groups of data and 200 different types of kernels using bezier curves. For each kernel, we calculate the difference of $Y$ at threshold compared with $Y(t)$ by true $X-Y$ relation in those 500 groups of data, getting the average to show the performance of the kernel. Thus we get the best kernel for different bandwidth.
+We designed different $X-Y$ relations and different distributions of samples (See table \ref{table:kernels_test}).
+The cutoff is at $X=59$.
+Then we randomly generated 500 groups of data and 200 different types of kernels using bezier curves. For each kernel, we calculate the difference of $Y$ at threshold compared with $Y(t)$ by true $X-Y$ relation in those 500 groups of data, and use the average as the benchmark for the kernel.
+Then we get the preferred kernel for a fixed bandwidth.
 
 \begin{figure}
    \centering
@@ -228,7 +244,7 @@ We randomly generated 500 groups of data and 200 different types of kernels usin
    \caption{Illustrated best kernels under different bandwidths}
    \label{fig:kernels}
 \end{figure}
-\subsubsection*{Kernels vary with density of data}
+\subsubsection*{Kernels vary with bandwidth}
 
 A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel. At a fixed bandwidth, the kernel does not gather around the cutoff at first, but chooses to spread out the weight to larger distance to the cutoff when bandwidth is small.
 
@@ -242,7 +258,7 @@ Comparing the result in different rows(in html files, can not be shown in pdf), 
 
 It is intuitive to explain this observation. If the samples are evenly distributed, it is easier to infer the information from data. But if some areas on $X$ axis has larger density of samples, giving less weight to them can mimic an evenly distributed set of data. Then the kernel will trend to trust samples in the sparse area.
 
-\subsection{ Differences after adding covariates}
+\subsection{Differences after adding covariates}
 We generate data by different $X-Y$ relation and different ways $Z$ affect $X,Y$ (See table \ref{table:kernels_test adding covariates}) where the samples are uniformly distributed.
 
 \begin{figure}
@@ -259,7 +275,7 @@ We generate data by different $X-Y$ relation and different ways $Z$ affect $X,Y$
 	\label{fig:kernels2}
 \end{figure}
 
-After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels becomes different (See Fig.\ref{fig:kernels2} ). This tells us our selection of bandwidth should concern the effect of covariates, and it will be unbiased only when the BNS is the same as Fig.\ref{bn_with_covar2}.
+After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels becomes different (See Fig.\ref{fig:kernels2}). This tells us that our selection of bandwidths should concern the effect of covariates.
 
 \begin{table}[h]
 	\centering
@@ -280,9 +296,82 @@ After adding covariates, there will be another backdoor path caused by $Z$, and 
 	\label{table:kernels_test adding covariates}
 \end{table}
 
-\subsection{Using weights to eliminate bias caused by confound effects}
-After adding covariates, there might be another backdoor path caused by $Z$, and the perfomance of different kernels may become different.
+\subsection{A step ahead of the kernel}
 
-In order to eliminate this bias, we need to find a bandwidth, to make sure among the included samples, $Z$ is independent with $X$. (See Fig.\ref{bn_with_covar2})
+This section discusses the feasibility of eliminating the confound effect using bandwidths and kernels.
 
-\end{document} 
+Let $P(*)$ be the density of data,
+and $P'(*)$ be the probability distribution supplied to the regression model.
+
+Let $\omega(x)$ be the random variable representing the nomalized weight of samples located at $x$.
+By the definition of bandwidths and kernels,
+the weight before normalization for $x$ is
+
+\begin{equation}
+   \omega'(x)=\begin{cases}
+      k\left(\frac{\left|x-t\right|}{b}\right)&\left|x-t\right|\le b\\
+      0&\left|x-t\right|>b
+   \end{cases}.
+\end{equation}
+
+After normalization,
+
+\begin{equation}
+   \omega(x)=\frac{\omega'(x)}{\sum_{x'}\omega'(x')P(x')}.
+\end{equation}
+
+Then $P'$ is well-defined by $P'(x,*)=\omega(x)P(x,*)$, since
+
+\begin{align}
+   \sum P'(*)=&\sum_xP'(x)\\
+   =&\sum_x\omega(x)P'(x)\\
+   =&\sum_x\frac{\omega'(x)P(x)}{\sum_{x'}\omega'(x')P(x')}\\
+   =&1.
+\end{align}
+
+Removing $Z\to X$ from Fig.\ref{bn_with_covar} is adding an independence relation between $X$ and $Z$,
+which requires
+
+\begin{align}
+   P'(x,z)=&P'(x)P'(z)\\
+   \omega(x)P(x,z)=&\omega(x)P(x)P'(z)\\
+   P(x,z)=&P(x)P'(z)\\
+   \frac{P(x,z)}{P(x)}=&P'(z)\\
+   P(z\mid x)=&P'(z),
+\end{align}
+
+which is a value independent of $x$.
+Therefore, $Z\to X$ can be removed only if $X\indep Z$ are independent at the very beginning.
+
+If we try to remove $Z\to Y$ instead, then $Y\indep Z\mid X$.
+
+\begin{align}
+   P'(y,z\mid x)=&P'(y\mid x)P'(z\mid x)\\
+   P'(x,y,z)P'(x)=&P'(x,y)P'(x,z)\\
+   (\omega(x)P(x,y,z))(\omega(x)P(x))=&(\omega(x)P(x,y))(\omega(x)P(x,z))\\
+   P(x,y,z)P(x)=&P(x,y)P(x,z)\\
+   P(y,z\mid x)=&P(y\mid x)P(z\mid x),
+\end{align}
+
+giving that $Y\indep Z\mid X$ initially.
+
+In conclusion, the confound effect cannot be simply removed by using bandwidths and kernels.
+To correctly identify $P(y\mid\hat x)$,
+one must assign the weights according to $Z$, too.
+
+\begin{align}
+   P'(y\mid x)=&P(y\mid \hat x)\\
+   \frac{P'(x,y)}{P'(x)}=&\sum_z P(y\mid \hat x,z)P(z\mid \hat x)\\
+   \frac{\sum_z \omega(x,z)P(x,y,z)}{\sum_z \omega(x,z)P(x,z)}=&\sum_z P(y\mid x,z)P(z)
+\end{align}
+
+Thus we only need to find a set of weights that satisfies such equation.
+A deeper look requires more discussion and will be omitted.
+
+In particular,
+if $Y$ is linear with respect to $X$ and $Z$,
+the parameters in $Y=X\alpha+Z\beta+\varepsilon$ can be obtained by linear regression,
+thus the do effect can be easily estimated.
+However, this is not necessary, since the confound effect never shows up in the estimation of treatment in this case.
+
+\end{document}
