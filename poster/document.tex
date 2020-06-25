@@ -106,7 +106,7 @@ Then
 
 \noindent proving that the traditional estimation in Eqn.(\ref{eqn:est_lim}) is unbiased.
 
-In contrast, if the bandwidth $b$ is non-negligible, this selection of data specified by $b$ will cause a backdoor path between $X$ and $Y$. (See Fig.\ref{fig:bn_with_bdw}) Then the see effect observed by regression between $X$ and $Y$ is not the true causal effect, leading to a bias. To eliminate this bias, we need to adjust the way of sampling by changing the kernel.
+In contrast, if the bandwidth $b$ is non-negligible, this selection of data specified by $b$ will cause a backdoor path between $X$ and $Y$. (See Fig.\ref{fig:bn_with_bdw}) Then the see effect observed by regression between $X$ and $Y$ is not the true causal effect, leading to a bias.
 
 \subsubsection*{covariates}
 Sometimes there are not only running variables $X$ and $Y$, but also many other variables $Z$, called covariates, may have effect on $Y$. If they are independent with $X$, the regression still works. However in some cases, $Z$ will affect both $X$ and $Y$, creating a backdoor path between $X$ and $Y$. (See Fig.\ref{bn_with_covar})
@@ -138,6 +138,63 @@ If covariates create a backdoor path as shown in Fig\ref{bn_with_covar2}, the co
 
 \section{Experiment and Discussion}
 
+The bandwidth $b$ and the kernel $k$ together decides the weights of data,
+yet they are separated into two independent parameters.
+The bandwidth focuses on the definition of "distance",
+and thus allows the reuse of kernels across problems of similar properties but with different scales and units.
+
+Moreover, the final probability distribution of samples supplied to the regression model is a composite outcome of the weights of data and the density of actual data.
+Only then can we improve the accuracy of $\hat\tau$ by manipulating $b$ and $k$.
+By letting the errors stated in section \ref{sec:obstacles} be the loss function, we get a chain of methods to determine $b$ and $k$:
+\begin{enumerate}
+   \item Find a bandwidth $b$ which balances between
+   \begin{enumerate}
+      \item the lack of data;
+      \item and bias caused by non-linearity of $X-Y$ relation.
+   \end{enumerate}
+   \item Find a kernel $k$ which
+   \begin{enumerate}
+      \item helps to reduce the bias caused by bandwidth;
+      \item eliminates the confound effect as much as possible.
+   \end{enumerate}
+\end{enumerate}
+
+\subsection{Error-minimizing bandwidth selection}
+
+In some articles, the method of cross validation is used for selecting an optimal bandwidth.
+However, this is not always accurate,
+because the samples near the threshold may perform very differently.
+Differences in these properties might result in a poor bandwidth for the estimation at the threshold.
+
+If $X-Y$ relation is non-linear,
+the curvature of the function $y=y(x)$ varies.
+An overestimation of the curvature leads to small bandwidth,
+which does not take full advantage of the data.
+An underestimation of the curvature leads to large bandwidth,
+which might introduce more bias from the non-linear $X-Y$ relation.
+
+Difference of density of data is another issue in RDD particularly.
+Data near the threshold might be under subjective manipulation.
+For example, students might work hard not to get below the pass line,
+so the number of students who is right below $60$ is much less than the number of students with other scores.
+This turbulance in the density of data, again, does not help to select a good bandwidth through cross validation.
+
+Therefore, we propose a method of quantifying the expected error at the cutoff directly, which is an estimation of the two aspects mentioned in section \ref{sec:obstacles}:
+
+\begin{enumerate}
+   \item[(a)] Using bandwidth $b$, suppose the linear regression has the result $Y=a(X-t)+b$. We use a formula to calculate the standard derivation of $b$ to represent the expected error caused by lack of data near threshold.
+   \item[(b)] First use a quadratic hypothesis function on regression to find out a curve showing approximate quadratic relationship between $X-Y$(do not use bandwidth $b$). Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold.
+\end{enumerate}
+
+Finally, we find a bandwidth who has least sum of those two kind of errors, which is the optimal bandwidth we need. (See Fig.\ref{table:opt bandwidth})
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1]{Figure_5.png}
+	\caption{Evaluate error of different bandwidth (on the headstart dataset)}
+	\label{table:opt bandwidth}
+\end{figure}
+
 \subsection{Using kernels to reduce bias caused by bandwidth}
 
 In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples (See table \ref{table:kernels_test}). The cutoff is at $X=59$.
@@ -161,7 +218,7 @@ In this section we do not consider covariates. We generate data by different $X-
    \label{table:kernels_test}
 \end{table}
 
-We randomly generated 500 groups of data and 200 different types of kernels using bezier curves. For each kernel, we calculate the difference of $Y$ at threshold compared with $Y(t)$ by True $X-Y$ relation in those 500 groups of data, getting the average to show the performance of the kernel. Thus we get the best kernel for different bandwidth.
+We randomly generated 500 groups of data and 200 different types of kernels using bezier curves. For each kernel, we calculate the difference of $Y$ at threshold compared with $Y(t)$ by true $X-Y$ relation in those 500 groups of data, getting the average to show the performance of the kernel. Thus we get the best kernel for different bandwidth.
 
 \begin{figure}
    \centering
@@ -171,7 +228,7 @@ We randomly generated 500 groups of data and 200 different types of kernels usin
    \caption{Illustrated best kernels under different bandwidths}
    \label{fig:kernels}
 \end{figure}
-\subsubsection*{Kernels vary with bandwidth}
+\subsubsection*{Kernels vary with density of data}
 
 A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel. At a fixed bandwidth, the kernel does not gather around the cutoff at first, but chooses to spread out the weight to larger distance to the cutoff when bandwidth is small.
 
@@ -227,29 +284,5 @@ After adding covariates, there will be another backdoor path caused by $Z$, and 
 After adding covariates, there might be another backdoor path caused by $Z$, and the perfomance of different kernels may become different.
 
 In order to eliminate this bias, we need to find a bandwidth, to make sure among the included samples, $Z$ is independent with $X$. (See Fig.\ref{bn_with_covar2})
-
-\section{Other Attempts}
-\subsubsection*{A better way to find best bandwidth}
-
-In some articles, cross validation method is used for selecting a optimal bandwidth. However this has not always accurate since the samples near the threshold may not have similar $X-Y$ relation and density of data. Especially, in many cases, data near the threshold is under subjective manipulation, making a great turbulance in the density of data. This is not good for the selection of bandwidth.
-
-We have these ways to quantify the expected error for different bandwidth caused by two aspects mentioned in section \ref{sec:obstacles}:
-
-\begin{enumerate}
-   \item[(a)] Use bandwidth $b$, suppose the linear regression has the result $Y=a(X-t)+b$, we use a formula to calculate the standard derivation of $b$ to represent the expected error caused by lack of data near threshold.
-   \item[(b)] First use a quadratic hypothesis function on regression to find out a curve showing approximate quadratic relationship between $X-Y$(do not use bandwidth $b$). Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold. 
-\end{enumerate}
-
-Then we find a bandwidth who has least sum of those two kind of errors, just the optimal bandwidth we need. (See table \ref{table:opt bandwidth})
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=1]{Figure_5.png}
-	\caption{Evaluate error of different bandwidth (on the headstart dataset)}
-	\label{table:opt bandwidth}
-\end{figure}
-
-
-
 
 \end{document} 
