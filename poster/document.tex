@@ -289,7 +289,7 @@ After adding covariates, there will be another backdoor path caused by $Z$, and 
 		\hline
 		\makecell{$x=x_0+z^2$\\$y=f(x)+0.3z$}&casez10&casez11&casez12\\
 		\hline
-		\makecell{$x=x_0+z$\\$y=f(x)+0.5Z^2$}&casez20&casez21&casez22\\
+		\makecell{$x=x_0+z$\\$y=f(x)+0.5z^2$}&casez20&casez21&casez22\\
 		\hline
 	\end{tabular}
 	\caption{$X-Y$ relations and ways of adding $Z$}
@@ -324,7 +324,7 @@ Then $P'$ is well-defined by $P'(x,*)=\omega(x)P(x,*)$, since
 
 \begin{align}
    \sum P'(*)=&\sum_xP'(x)\\
-   =&\sum_x\omega(x)P'(x)\\
+   =&\sum_x\omega(x)P(x)\\
    =&\sum_x\frac{\omega'(x)P(x)}{\sum_{x'}\omega'(x')P(x')}\\
    =&1.
 \end{align}
