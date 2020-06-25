@@ -20,6 +20,7 @@
 \usepackage{bm}
 \usepackage{graphicx,float,wrapfig}
 \usepackage{tikz}
+\usepackage{makecell}
 \setlength{\parindent}{2em}
 \usetikzlibrary{positioning}
 \usetikzlibrary{arrows,graphs}
@@ -110,7 +111,7 @@ In contrast, if the bandwidth $b$ is non-negligible, this selection of data spec
 \subsection*{covariates}
 Sometimes there are not only running variables $X$ and $Y$, but also many other variables $Z$, called covariates, may have effect on $Y$. If they are independent with $X$, the regression still works. However in some cases, $Z$ will affect both $X$ and $Y$, creating a backdoor path between $X$ and $Y$. (See Fig.\ref{bn_with_covar})
 
-In order to eliminate this bias, we need to find a bandwidth, to make sure among the included samples, $Z$ is independent with $X$.
+In order to eliminate this bias, we need to find a bandwidth, to make sure among the included samples, $Z$ is independent with $X$. (See Fig.\ref{bn_with_covar2})
 
 \begin{figure}[h]
 	\centering
@@ -119,6 +120,7 @@ In order to eliminate this bias, we need to find a bandwidth, to make sure among
    \label{bn_with_covar}
 	\includegraphics[scale=0.5]{Figure_4.png}
 	\caption{eliminate $Z\rightarrow X$ path}
+	\label{bn_with_covar2}
 \end{figure}
 
 \subsection{Obstacles}
@@ -187,7 +189,42 @@ The reason is intuitive. If the samples are exactly randomly distributed, it wil
 
 
 \subsection{ Differences after adding covariates}
-After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels may become different.
+We generate data by different $X-Y$ relation and different ways $Z$ affect $X,Y$ (See table \ref{table:kernels_test adding covariates}) where the samples are uniformly distributed.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.45]{case41_frame0000035.png}
+	\caption*{41}
+	\includegraphics[scale=0.49]{casez01_frame0000035.png}
+	\caption*{z01}
+	\includegraphics[scale=0.49]{casez11_frame0000035.png}
+	\caption*{z11}
+	\includegraphics[scale=0.45]{casez21_frame0000035.png}
+	\caption*{z21}
+	\caption{Illustrated best kernels under different ways of adding covariates}
+	\label{fig:kernels2}
+\end{figure}
+
+After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels becomes different (See Fig.\ref{fig:kernels2} ). This tells us our selection of bandwidth should concern the effect of covariates, and it will be unbiased only when the BNS is the same as Fig.\ref{bn_with_covar2}.
+
+\begin{figure}[h]
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		$f(x)=$&$0.2(x-59)^2+2$&$-0.2(x-59)^2-0.4(x-59)+2$&$0.1(x-59)^3+2$\\
+		\hline
+		\makecell{$x=x_0$\\$y=f(x)$}&case40&case041&case42\\
+		\hline
+		\makecell{$x=x_0+z$\\$y=f(x)+0.3z$}&casez00&casez01&casez02\\
+		\hline
+		\makecell{$x=x_0+z^2$\\$y=f(x)+0.3z$}&casez10&casez11&casez12\\
+		\hline
+		\makecell{$x=x_0+z$\\$y=f(x)+0.5Z^2$}&casez20&casez21&casez22\\
+		\hline
+	\end{tabular}
+	\caption{$X-Y$ relations and ways of adding $Z$}
+	\label{table:kernels_test adding covariates}
+\end{figure}
 
 
 \section{Other Attempts}
@@ -198,15 +235,17 @@ In some articles, cross validation method is used for selecting a optimal bandwi
 We have these ways to quantify the expected error for different bandwidth caused by two aspects mentioned in section \ref{sec:obstacles}:
 
 \begin{enumerate}
-   \item[(a)] Use bandwidth $b$, suppose the linear regression has the result $Y=a(X-t)+b$, we use a formula to calculate the standard derivation of $b$ two represent the expected error caused by lack of data near threshold.
+   \item[(a)] Use bandwidth $b$, suppose the linear regression has the result $Y=a(X-t)+b$, we use a formula to calculate the standard derivation of $b$ to represent the expected error caused by lack of data near threshold.
    \item[(b)] First use a quadratic hypothesis function on regression to find out a curve showing approximate quadratic relationship between $X-Y$(do not use bandwitdh $b$). Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold. 
 \end{enumerate}
 
-Then we find a bandwidth who has least sum of those two kind of errors, just the optimal bandwidth we need.
+Then we find a bandwidth who has least sum of those two kind of errors, just the optimal bandwidth we need. (See table \ref{table:opt bandwidth})
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=1]{Figure_5.png}
+	\caption{Evaluate error of different bandwidth (on the headstart dataset)}
+	\label{table:opt bandwidth}
 \end{figure}
 
 

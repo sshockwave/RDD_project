@@ -1,8 +1,0 @@
-\BOOKMARK [1][-]{section.1}{Analyzing Baysian Network}{}% 1
-\BOOKMARK [2][-]{subsection.1.1}{Introduction to RDD}{section.1}% 2
-\BOOKMARK [2][-]{subsection.1.2}{Baysian Network}{section.1}% 3
-\BOOKMARK [2][-]{subsection.1.3}{Obstacles}{section.1}% 4
-\BOOKMARK [1][-]{section.2}{Experiment and Discussion}{}% 5
-\BOOKMARK [2][-]{subsection.2.1}{Using kernel to elimimate bias caused by bandwidth}{section.2}% 6
-\BOOKMARK [2][-]{subsection.2.2}{ Differences after adding covariates}{section.2}% 7
-\BOOKMARK [1][-]{section.3}{Other Attempts}{}% 8
