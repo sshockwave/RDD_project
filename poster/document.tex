@@ -135,13 +135,13 @@ Under the BN shown in Fig.\ref{fig:bn_with_bdw}, the performance of the estimato
 
 When $b\to 0$, less and less data stay within the bandwidth, so the variance in (a) becomes significant. The bias in (b) converges to $0$ under smoothness assumption on the $X-Y$ relation. The conclusion is opposite when $b\to+\infty$.
 
-If covariates create a backdoor path as shown in Fig\ref{bn_with_covar2}, the confound effect significantly becomes a source of error in cases with large bandwidth and non-linear $X-Y$ relation.
+If covariates create a backdoor path as shown in Fig.\ref{bn_with_covar2}, the confound effect significantly becomes a source of error in cases with large bandwidth and non-linear $X-Y$ relation.
 
 \section{Experiment and Discussion}
 
 The bandwidth $b$ and the kernel $k$ together decides the weights of data,
 yet they are separated into two independent parameters.
-The bandwidth focuses on the definition of "distance",
+The bandwidth focuses on the definition of ``distance'',
 and thus allows the reuse of kernels across problems of similar properties but with different scales and units.
 
 Moreover, the final probability distribution of samples supplied to the regression model is a composite outcome of the weights of data and the density of actual data.
@@ -163,7 +163,7 @@ By letting the errors stated in section \ref{sec:obstacles} be the loss function
 \subsection{Error-minimizing bandwidth selection}
 
 In some articles, the method of cross validation is used for selecting an optimal bandwidth.
-However, this is not always accurate,
+However, this is not always reliable,
 because the samples near the threshold may perform very differently.
 Differences in these properties might result in a poor bandwidth for the estimation at the threshold.
 
@@ -174,7 +174,7 @@ which does not take full advantage of the data.
 An underestimation of the curvature leads to large bandwidth,
 which might introduce more bias from the non-linear $X-Y$ relation.
 
-Difference of density of data is another issue in RDD particularly.
+Difference of density of data is another issue, particularly in RDD.
 Data near the threshold might be under subjective manipulation.
 For example, students might work hard not to get below the pass line,
 so the number of students who is right below $60$ is much less than the number of students with other scores.
@@ -184,7 +184,7 @@ Therefore, we propose a method of quantifying the expected error at the cutoff d
 
 \begin{enumerate}
    \item[(a)] Using bandwidth $b$, suppose the linear regression has the result $Y=a(X-t)+b$. We use a formula to calculate the standard derivation of $b$ to represent the expected error caused by lack of data near threshold.
-   \item[(b)] First use a quadratic hypothesis function on regression to find out a curve showing approximate quadratic relationship between $X-Y$(do not use bandwidth $b$). Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold.
+   \item[(b)] First use a quadratic hypothesis function for regression to find out a curve showing approximate quadratic relationship between $X-Y$. This hypothesis function should be unified for all $b$. Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold.
 \end{enumerate}
 
 Finally, we find a bandwidth who has least sum of those two kind of errors, which is the optimal bandwidth we need. (See Fig.\ref{table:opt bandwidth})
@@ -201,7 +201,7 @@ Finally, we find a bandwidth who has least sum of those two kind of errors, whic
 In this section we do not consider covariates.
 There are a vast types of kernels.
 Triangle and rectangle kernels are used frequently in previous studies.
-We extracted some properties of these kernels:
+We extracted some properties from these kernels:
 \begin{enumerate}
    \item smooth;
    \item monotonic;
@@ -210,7 +210,7 @@ We extracted some properties of these kernels:
 
 In common sense, a good kernel is very likely to contain these properties.
 So we decided to test against the class of bezier curves,
-which can mimic most of such function.
+which is able to mimic most of such functions.
 
 \begin{table}[h]
 	\centering
