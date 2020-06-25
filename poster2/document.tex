@@ -1,0 +1,254 @@
+% Modified based on Xiaoming Sun's template and https://www.overleaf.com/latex/templates/cs6780-assignment-template/hgjyygbykvrf
+
+\documentclass[a4 paper,12pt]{article}
+\usepackage[inner=2.2cm,outer=2.2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage[rgb]{xcolor}
+\usepackage{verbatim}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=blue, citecolor=blue]{hyperref}
+\usepackage{booktabs}
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{extramarks}
+\usepackage{indentfirst}
+\usepackage{chngpage}
+\usepackage{soul,color}
+\usepackage{bm}
+\usepackage{graphicx,float,wrapfig}
+\usepackage{tikz}
+\usepackage{makecell}
+\setlength{\parindent}{2em}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows,graphs}
+\newcommand{\homework}[3]{
+   \pagestyle{myheadings}
+   \thispagestyle{plain}
+   \newpage
+   \setcounter{page}{1}
+   \noindent
+   \begin{center}
+   \framebox{
+        \vbox{\vspace{2mm}
+        \hbox to 6.28in { {\bf Causal and Statistical Inference \hfill} {\hfill {\rm #2} {\rm #3}} }
+        \vspace{4mm}
+        \hbox to 6.28in { {\Large \hfill #1  \hfill} }
+        \vspace{3mm}}
+   }
+   \end{center}
+   \vspace*{4mm}
+}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+% Custom defined operators
+\DeclareMathOperator{\Do}{do}
+
+\begin{document}
+\homework{Poster Report: RDD}{Kai Su,}{Qihang Chen}
+
+\section{Analyzing Baysian Network}
+\subsection{Introduction to RDD}
+When the running variable $X$ takes value at different side of a threshold value $t$, there will be a treatment(marked $w=1$) having an effect on the output $Y$ on one side of $X=t$ and no treatment(marked $w=0$) on the other side. Our goal is to measure the average effect $\tau$ solely caused by the treatment. That is, $\tau=E[Y|\Do(W)=1]-E[Y|\Do(W)=0]$.
+
+Such effect appears as a sudden increase or decrease of $y$ in the neighborhood of $X=t$(See Fig.\ref{fig:rddintro}). Therefore, $\tau$ is traditionally estimated using the see effect of $W$. Formally put,
+
+\begin{equation}
+   \hat\tau=\lim_{x\to t^+}E[Y|X=x]-\lim_{x\to t^-}E[Y|X=x].\label{eqn:est_lim}
+\end{equation}
+
+For simplicity, denote 
+\begin{align}
+   E[Y|X=t_+]=\lim_{x\to t^+}E[Y|X=x],\\
+   E[Y|X=t_-]=\lim_{x\to t^-}E[Y|X=x].
+\end{align}
+
+However, we are lack of data near the threshold in most cases, difficult for us to calculate these values on the threshold directly. Thus we need some regression to infer the relation between $X$ and $Y$ so as to predict $E[Y|X=t_+]$ and $E[Y|X=t_-]$.
+
+A common practice is to apply linear regression on both sides. The data near the threshold is more valuable, thus we can set a bandwidth $b$, which is the largest distance where data are taken into account; and a kernel $k$, which assigns weights to data. Denote such an estimator as $\hat\tau(b,k)$ for simplicity.
+
+\begin{figure}[h]
+	\centering
+   \includegraphics[scale=1]{RDDintro.jpg}
+   \caption{An example of dataset in RDD}
+   \label{fig:rddintro}
+\end{figure}
+
+\subsection{Baysian Network}
+%对应作业第一部分
+
+Basically, running variable $X$ will decide $W$ and affect $Y$; $W$ will have effect on $Y$, as in Fig.\ref{fig:basic_rd_bns}.
+
+\begin{figure}[h]
+	\centering
+   \includegraphics[scale=0.5]{Figure_1.png}
+   \caption{The basic BN for RDD}
+   \label{fig:basic_rd_bns}
+   \includegraphics[scale=0.5]{Figure_2.png}
+   \caption{BN with bandwidth}
+   \label{fig:bn_with_bdw}
+\end{figure}
+
+\subsection*{bandwidth}
+When the bandwidth is sufficiently small,
+\begin{align}
+   P(Y|W=0,X=t)\approx P(Y|X=t_-),\\
+   P(Y|W=1,X=t)\approx P(Y|X=t_+).
+\end{align}
+
+Then
+\begin{align}
+   \tau&=E[Y|\Do(W=1),X=t]-E[Y|\Do(w=0),X=t]\\
+   &\approx E[Y|X=t_+]-E[Y|X=t_-]=\hat\tau,
+\end{align}
+
+\noindent proving that the traditional estimation in Eqn.(\ref{eqn:est_lim}) is unbiased.
+
+In contrast, if the bandwidth $b$ is non-negligible, this selection of data specified by $b$ will cause a backdoor path between $X$ and $Y$. (See Fig.\ref{fig:bn_with_bdw}) Then the see effect observed by regression between $X$ and $Y$ is not the true causal effect, leading to a bias. To eliminate this bias, we need to adjust the way of sampling by changing the kernel.
+
+\subsection*{covariates}
+Sometimes there are not only running variables $X$ and $Y$, but also many other variables $Z$, called covariates, may have effect on $Y$. If they are independent with $X$, the regression still works. However in some cases, $Z$ will affect both $X$ and $Y$, creating a backdoor path between $X$ and $Y$. (See Fig.\ref{bn_with_covar})
+
+In order to eliminate this bias, we need to find a bandwidth, to make sure among the included samples, $Z$ is independent with $X$. (See Fig.\ref{bn_with_covar2})
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{Figure_3.png}
+   \caption{BN with covariates}
+   \label{bn_with_covar}
+	\includegraphics[scale=0.5]{Figure_4.png}
+	\caption{eliminate $Z\rightarrow X$ path}
+	\label{bn_with_covar2}
+\end{figure}
+
+\subsection{Obstacles}
+\label{sec:obstacles}
+%对应作业第二部分
+
+Under the BN shown in Fig.\ref{fig:bn_with_bdw}, the performance of the estimator $\hat \tau(b,k)$ is restricted by two factors:
+
+\begin{enumerate}
+   \item[(a)] Large variance due to lack of data;
+   \item[(b)] Bias caused by fitting non-linear $X-Y$ relation with linear regression.
+\end{enumerate}
+
+When $b\to 0$, less and less data stay within the bandwidth, so the variance in (a) becomes significant. The bias in (b) converges to $0$ under smoothness assumption on the $X-Y$ relation. The conclusion is opposite when $b\to+\infty$.
+
+%TODO: Covariate引发的问题
+
+\section{Experiment and Discussion}
+
+\subsection{Using kernel to elimimate bias caused by bandwidth}
+
+In this section we do not consider covariates. We generate data by different $X-Y$ relation and different distribution of samples (See table \ref{table:kernels_test}). The cutoff is at $X=59$.
+
+\begin{figure}[h]
+	\centering
+   \begin{tabular}{|c|c|c|c|}
+      \hline
+      $y=$&$0.2(x-59)^2+2$&$-0.2(x-59)^2-0.4(x-59)+2$&$0.1(x-59)^3+2$\\
+      \hline
+      Dense middle&case00&case01&case02\\
+      \hline
+      Sparse middle&case10&case11&case12\\
+      \hline
+      Dense cutoff&case20&case21&case22\\
+      \hline
+      Sparse cutoff&case30&case31&case32\\
+      \hline
+   \end{tabular}
+   \caption{$X-Y$ relations and data distributions}
+   \label{table:kernels_test}
+\end{figure}
+
+We randomly generated 500 groups of data and 200 different types of kernels using bezier curves. For each kernel, we calculate the difference of $Y$ at threshold compared with $Y(t)$ by True $X-Y$ relation in those 500 groups of data, getting the average to show the performance of the kernel. Thus we get the best kernel for different bandwidth.
+
+\begin{figure}
+   \centering
+   \includegraphics[scale=0.8]{case30_frame0000000.png}
+   \includegraphics[scale=0.8]{case30_frame0000031.png}
+   \includegraphics[scale=0.8]{case30_frame0000049.png}
+   \caption{Illustrated best kernels under different bandwidths}
+   \label{fig:kernels}
+\end{figure}
+\subsection*{Kernel varies with bandwidth}
+
+A typical result(case30) is shown in Fig.\ref{fig:kernels}. The $x$-axis is the distance from the cutoff, and the $y$-axis is the weight of the kernel.At a fixed bandwidth, the kernel is not just concentrating near the cutoff, but first chooses to spread out the weight to larger distance to the cutoff when bandwidth is small.
+
+This consequence results from the randomness of data. Too few samples will cause large uncertainty. Giving more weight to those father samples has the similar effect of obtaining more samples, in order to lower the variance of estimation. As the bandwidth $b$ becomes larger, the weights concentrate to the cutoff to lower the bias caused by the nonlinearity in $X-Y$ relation.
+
+\subsection*{Kernel varies with sample distribution}
+
+Another observation is that, the distribution of samples along $X$ axis really affect the performance of kernels. The reason is the distribution of samples affect the randomness of sampling, thus we need to use kernel to adjust the sampling method.
+
+Comparing the result in different rows(in html files, can not be shown in pdf), we can find a regular pattern that adding weight on those samples where samples along the $X$ axis are sparse will give better performance. 
+
+The reason is intuitive. If the samples are exactly randomly distributed, it will be easier for us to infer the information from data. But if some areas on $X$ axis has larger density of samples, we shall give less weight to them in order to keep the sampling method ``seems to be still random''. Then the kernel will trend to samples in the sparse area.
+
+
+\subsection{ Differences after adding covariates}
+We generate data by different $X-Y$ relation and different ways $Z$ affect $X,Y$ (See table \ref{table:kernels_test adding covariates}) where the samples are uniformly distributed.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.45]{case41_frame0000035.png}
+	\caption*{41}
+	\includegraphics[scale=0.49]{casez01_frame0000035.png}
+	\caption*{z01}
+	\includegraphics[scale=0.49]{casez11_frame0000035.png}
+	\caption*{z11}
+	\includegraphics[scale=0.45]{casez21_frame0000035.png}
+	\caption*{z21}
+	\caption{Illustrated best kernels under different ways of adding covariates}
+	\label{fig:kernels2}
+\end{figure}
+
+After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels becomes different (See Fig.\ref{fig:kernels2} ). This tells us our selection of bandwidth should concern the effect of covariates, and it will be unbiased only when the BNS is the same as Fig.\ref{bn_with_covar2}.
+
+\begin{figure}[h]
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		$f(x)=$&$0.2(x-59)^2+2$&$-0.2(x-59)^2-0.4(x-59)+2$&$0.1(x-59)^3+2$\\
+		\hline
+		\makecell{$x=x_0$\\$y=f(x)$}&case40&case041&case42\\
+		\hline
+		\makecell{$x=x_0+z$\\$y=f(x)+0.3z$}&casez00&casez01&casez02\\
+		\hline
+		\makecell{$x=x_0+z^2$\\$y=f(x)+0.3z$}&casez10&casez11&casez12\\
+		\hline
+		\makecell{$x=x_0+z$\\$y=f(x)+0.5Z^2$}&casez20&casez21&casez22\\
+		\hline
+	\end{tabular}
+	\caption{$X-Y$ relations and ways of adding $Z$}
+	\label{table:kernels_test adding covariates}
+\end{figure}
+
+
+\section{Other Attempts}
+\subsection*{A better way to find best bandwidth}
+
+In some articles, cross validation method is used for selecting a optimal bandwidth. However this has not always accurate because samples near threshold may not have similar distribution and $X-Y$ relation.
+
+We have these ways to quantify the expected error for different bandwidth caused by two aspects mentioned in section \ref{sec:obstacles}:
+
+\begin{enumerate}
+   \item[(a)] Use bandwidth $b$, suppose the linear regression has the result $Y=a(X-t)+b$, we use a formula to calculate the standard derivation of $b$ to represent the expected error caused by lack of data near threshold.
+   \item[(b)] First use a quadratic hypothesis function on regression to find out a curve showing approximate quadratic relationship between $X-Y$(do not use bandwitdh $b$). Then project all the samples onto the curve, use linear regression with bandwidth $b$ and find the difference of value between the two ways of regression on the threshold. 
+\end{enumerate}
+
+Then we find a bandwidth who has least sum of those two kind of errors, just the optimal bandwidth we need. (See table \ref{table:opt bandwidth})
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1]{Figure_5.png}
+	\caption{Evaluate error of different bandwidth (on the headstart dataset)}
+	\label{table:opt bandwidth}
+\end{figure}
+
+
+
+
+\end{document} 
