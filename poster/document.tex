@@ -162,7 +162,7 @@ By letting the errors stated in section \ref{sec:obstacles} be the loss function
    \end{enumerate}
 \end{enumerate}
 
-\subsection{Error-minimizing Bandwidth Belection}
+\subsection{Error-minimizing Bandwidth Selection}
 
 In some articles, the method of cross validation is used for selecting an optimal bandwidth.
 However, this is not always reliable,
@@ -263,7 +263,7 @@ It is intuitive to explain this observation. If the samples are evenly distribut
 \subsection{Differences after Adding Covariates}
 We generate data by different $X-Y$ relation and different ways that $Z$ affect $X,Y$ (See table \ref{table:kernels_test adding covariates}) where the samples are uniformly distributed.
 
-\begin{table}[h]
+\begin{figure}[h]
    \centering
    \begin{tabular}{ c c c c}
    \includegraphics[scale=0.2]{case41_frame0000035.png}
@@ -278,9 +278,9 @@ We generate data by different $X-Y$ relation and different ways that $Z$ affect 
    \end{tabular}
 	\caption{Illustrated best kernels under different ways of adding covariates with $b=2.1628$}
 	\label{fig:kernels2}
-\end{table}
+\end{figure}
 
-After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of kernels becomes different (See Table \ref{fig:kernels2}). This tells us that covariates do have impact on the result of estimation and our selection of kernels should concern the effect of covariates.
+After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of kernels becomes different (See Fig.\ref{fig:kernels2}). This tells us that covariates do have impact on the result of estimation and our selection of kernels should concern the effect of covariates.
 
 \begin{table}[h]
 	\centering
