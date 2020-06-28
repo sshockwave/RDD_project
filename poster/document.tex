@@ -261,23 +261,26 @@ Comparing the result in different rows(in html files, can not be shown in pdf), 
 It is intuitive to explain this observation. If the samples are evenly distributed, it is easier to infer the information from data. But if some areas on $X$ axis has larger density of samples, giving less weight to them can mimic an evenly distributed set of data. Then the kernel will trend to trust samples in the sparse area.
 
 \subsection{Differences after adding covariates}
-We generate data by different $X-Y$ relation and different ways $Z$ affect $X,Y$ (See table \ref{table:kernels_test adding covariates}) where the samples are uniformly distributed.
+We generate data by different $X-Y$ relation and different ways that $Z$ affect $X,Y$ (See table \ref{table:kernels_test adding covariates}) where the samples are uniformly distributed.
 
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.45]{case41_frame0000035.png}
-	\caption*{41}
-	\includegraphics[scale=0.49]{casez01_frame0000035.png}
-	\caption*{z01}
-	\includegraphics[scale=0.49]{casez11_frame0000035.png}
-	\caption*{z11}
-	\includegraphics[scale=0.45]{casez21_frame0000035.png}
-	\caption*{z21}
-	\caption{Illustrated best kernels under different ways of adding covariates}
+\begin{table}[h]
+   \centering
+   \begin{tabular}{ c c c c}
+   \includegraphics[scale=0.2]{case41_frame0000035.png}
+   &
+   \includegraphics[scale=0.24]{casez01_frame0000035.png}
+   &
+   \includegraphics[scale=0.24]{casez11_frame0000035.png}
+   &
+   \includegraphics[scale=0.2]{casez21_frame0000035.png}
+   \\
+   case41&casez01&casez11&casez21\\
+   \end{tabular}
+	\caption{Illustrated best kernels under different ways of adding covariates with $b=2.1628$}
 	\label{fig:kernels2}
-\end{figure}
+\end{table}
 
-After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of different kernels becomes different (See Fig.\ref{fig:kernels2}). This tells us that our selection of bandwidths should concern the effect of covariates.
+After adding covariates, there will be another backdoor path caused by $Z$, and the perfomance of kernels becomes different (See Table \ref{fig:kernels2}). This tells us that covariates do have impact on the result of estimation and our selection of kernels should concern the effect of covariates.
 
 \begin{table}[h]
 	\centering
@@ -285,7 +288,7 @@ After adding covariates, there will be another backdoor path caused by $Z$, and 
 		\hline
 		$f(x)=$&$0.2(x-59)^2+2$&$-0.2(x-59)^2-0.4(x-59)+2$&$0.1(x-59)^3+2$\\
 		\hline
-		\makecell{$x=x_0$\\$y=f(x)$}&case40&case041&case42\\
+		\makecell{$x=x_0$\\$y=f(x)$}&case40&case41&case42\\
 		\hline
 		\makecell{$x=x_0+z$\\$y=f(x)+0.3z$}&casez00&casez01&casez02\\
 		\hline
@@ -300,7 +303,7 @@ After adding covariates, there will be another backdoor path caused by $Z$, and 
 
 \subsection{A step ahead of the kernel}
 
-This section discusses the feasibility of eliminating the confound effect using bandwidths and kernels.
+This section discusses the feasibility of eliminating the confound effect caused by covariates using bandwidths and kernels.
 
 Let $P(*)$ be the density of data,
 and $P'(*)$ be the probability distribution supplied to the regression model.
